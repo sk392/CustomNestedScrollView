@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
+import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import android.widget.OverScroller
 import androidx.core.view.*
@@ -565,6 +566,135 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 mVelocityTracker?.clear()
             }
         }
+    }
+    private val nestedScrollingFlinger = object : Runnable {
+
+        private val scrollConsumed = IntArray(2)
+        private val scrollOffset = IntArray(2)
+        private var lastFlingY: Int = 0
+        private val scroller: OverScroller = OverScroller(context, Interpolator { input ->
+            var t = input
+            t -= 1.0f
+            t * t * t * t * t + 1.0f
+        })
+        private var hasBeenNestedScrolled: Boolean = false
+
+        fun startFling(velocityY: Float, hasBeenNestedScrolled: Boolean) {
+            if (Math.abs(velocityY) > mMinimumVelocity && (hasBeenNestedScrolled || velocityY < 0)) {
+                this.hasBeenNestedScrolled = hasBeenNestedScrolled
+
+                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH)
+
+                lastFlingY = 0
+                scroller.fling(0, 0, 0, velocityY.toInt(),
+                    Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE)
+                postOnAnimation()
+            }
+        }
+
+        override fun run() {
+            if (hasBeenNestedScrolled) {
+                flingAfterNestedScroll()
+            } else {
+                flingAfterWebViewScroll()
+            }
+        }
+
+        private fun flingAfterNestedScroll() {
+            val scroller = this.scroller
+            if (scroller.isOverScrolled) {
+                scroller.abortAnimation()
+            }
+            if (scroller.computeScrollOffset()) {
+                val scrollConsumed = this.scrollConsumed
+                val scrollOffset = this.scrollOffset
+                val y = scroller.currY
+                var dy = y - lastFlingY
+                lastFlingY = y
+
+                if (dispatchNestedPreScroll(0, dy, scrollConsumed, null, ViewCompat.TYPE_NON_TOUCH)) {
+                    dy -= scrollConsumed[1]
+                }
+
+                if (dispatchNestedScroll(0, 0, 0, dy, scrollOffset, ViewCompat.TYPE_NON_TOUCH)) {
+                    dy += scrollOffset[1]
+                }
+
+                val scrollToY = scrollY + dy
+                if (dy < 0 && scrollToY < 0) {
+                    scrollTo(0, 0)
+                    scroller.abortAnimation()
+                } else if (dy > 0 && scrollToY > computeVerticalScrollRange()) {
+                    scrollTo(0, computeVerticalScrollRange())
+                    scroller.abortAnimation()
+                } else {
+                    scrollBy(0, dy)
+                }
+
+                if (scroller.isFinished) {
+                    endFling()
+                } else {
+                    postOnAnimation()
+                }
+            } else {
+                endFling()
+            }
+        }
+
+        private fun flingAfterWebViewScroll() {
+            val scroller = this.scroller
+            if (scroller.isOverScrolled) {
+                scroller.abortAnimation()
+            }
+            if (scroller.computeScrollOffset()) {
+                val scrollConsumed = this.scrollConsumed
+                val scrollOffset = this.scrollOffset
+                val y = scroller.currY
+                val dy = y - lastFlingY
+                lastFlingY = y
+
+                var scrollToY = scrollY + dy
+                if (dy < 0 && scrollToY < 0) {
+                    if (dispatchNestedPreScroll(0, scrollToY, scrollConsumed, null, ViewCompat.TYPE_NON_TOUCH)) {
+                        scrollToY -= scrollConsumed[1]
+                    }
+
+                    if (dispatchNestedScroll(0, 0, 0, scrollToY, scrollOffset, ViewCompat.TYPE_NON_TOUCH)) {
+                        scrollToY += scrollOffset[1]
+                    }
+                }
+
+                if (scrollToY == dy) {
+                    scroller.abortAnimation()
+                }
+
+                if (scroller.isFinished) {
+                    endFling()
+                } else {
+                    postOnAnimation()
+                }
+            } else {
+                endFling()
+            }
+        }
+
+        fun stopFling() {
+            scroller.abortAnimation()
+            endFling()
+        }
+
+        fun isFinished() = scroller.isFinished
+
+        private fun endFling() {
+            removeCallbacks(this)
+            stopNestedScroll(ViewCompat.TYPE_NON_TOUCH)
+        }
+
+        private fun postOnAnimation() {
+            removeCallbacks(this)
+            ViewCompat.postOnAnimation(this@CustomNestedScrollView, this)
+        }
+
     }
 
 }
