@@ -276,65 +276,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 }
             }
         }
-//        if (action == MotionEvent.ACTION_MOVE && mIsBeingDragged) {
-//            return true
-//        }
-//        when (action and MotionEvent.ACTION_MASK) {
-//            MotionEvent.ACTION_MOVE -> {
-//
-//                val activePointerId = mActivePointerId
-//                if (activePointerId == INVALID_POINTER) {
-//                    // If we don't have a valid id, the touch down wasn't on content.
-//                    return false
-//                }
-//
-//                val pointerIndex = ev.findPointerIndex(activePointerId)
-//                if (pointerIndex == -1) {
-//                    return false
-//                }
-//
-//                val y = ev.getY(pointerIndex).toInt()
-//                val yDiff = Math.abs(y - mLastMotionY)
-//                if (yDiff > mTouchSlop && nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL == 0 && isInFirstChild(ev.x,ev.y)) {
-//                    mIsBeingDragged = true
-//                    Log.d("mIsBeingDragged","onInterceptTouchEvent MOVE $mIsBeingDragged")
-//                    mLastMotionY = y
-//                    initVelocityTrackerIfNotExists()
-//                    mVelocityTracker?.addMovement(ev)
-//                    mNestedYOffset = 0
-//                    parent?.requestDisallowInterceptTouchEvent(true)
-//                }
-//            }
-//            MotionEvent.ACTION_DOWN -> {
-//                val y = ev.y
-//                if (!isInFirstChild(ev.x, y)) {
-//                    mIsBeingDragged = false
-//                    Log.d("mIsBeingDragged","onInterceptTouchEvent DOWN $mIsBeingDragged")
-//                    recycleVelocityTracker()
-//                }
-//
-//                mLastMotionY = y.toInt()
-//                mActivePointerId = ev.getPointerId(0)
-//
-//                initOrResetVelocityTracker()
-//                mVelocityTracker?.addMovement(ev)
-//
-//                mOverScroller.computeScrollOffset()
-//                mIsBeingDragged = !mOverScroller.isFinished
-//                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH)
-//            }
-//
-//            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-//                /* Release the drag */
-//                mIsBeingDragged = false
-//                Log.d("mIsBeingDragged","onInterceptTouchEvent CANCLE $mIsBeingDragged")
-//                mActivePointerId = INVALID_POINTER
-//                recycleVelocityTracker()//왜 초기화하지?? fling할 떄 써야되는데.?
-//
-//                stopNestedScroll(ViewCompat.TYPE_TOUCH)
-//            }
-//            MotionEvent.ACTION_POINTER_UP -> onSecondaryPointerUp(ev)
-//        }
         return mIsBeingDragged
     }
 
@@ -357,10 +298,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 mVelocityTracker?.addMovement(ev)
 
                 mOverScroller.computeScrollOffset()
-//                if (mIsBeingDragged != mOverScroller.isFinished) {
-//                    parent?.requestDisallowInterceptTouchEvent(true)
-//                }
-                //stop fling
                 if (!mOverScroller.isFinished) mOverScroller.abortAnimation()
 
                 mLastMotionY = ev.y.toInt()
@@ -384,14 +321,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 }
 
                 val y = ev.getY(pointerIndex).toInt()
-//                val yDiff = Math.abs(y - mLastMotionY)
-//                if (yDiff > mTouchSlop && nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL == 0 ) {
-//                    mIsBeingDragged = true
-//                    Log.d("mIsBeingDragged", "onInterceptTouchEvent MOVE $mIsBeingDragged")
-//
-//                    mNestedYOffset = 0
-//                    parent?.requestDisallowInterceptTouchEvent(true)
-//                }
 
                 var dy = mLastMotionY - y
 
@@ -416,11 +345,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                     //네스티드 프리스크롤한 후에 시작되는 y값을 계산.
                     mLastMotionY = y - mScrollOffset[1]
 
-
-//                    if (overScrollByCompat(0, dy, 0, scrollY, 0, range, 0, 0)
-//                        && !hasNestedScrollingParent(ViewCompat.TYPE_TOUCH)) {
-//                        mVelocityTracker?.clear()
-//                    }
                     overScroll(dy)
 
                     val oldY = scrollY
