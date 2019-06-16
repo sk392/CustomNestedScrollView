@@ -1,0 +1,66 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/coordinator_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+>
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:statusBarScrim="@android:color/transparent"
+                app:contentScrim="@android:color/transparent"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="146dp"
+                        android:text="Search"
+                        android:textColor="@android:color/black"
+                        android:gravity="center"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:text="Tab"
+                        android:textColor="@android:color/black"
+                        android:gravity="center"/>
+
+            </LinearLayout>
+            <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:focusable="false"
+                    android:visibility="invisible"
+                    android:clickable="false"
+                    app:layout_collapseMode="pin"/>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <latte.example.com.customnestedscrollapplication.CustomNestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:background="@android:color/black"
+                        android:textSize="15dp"
+                        android:text="video"/>
+        <latte.example.com.customnestedscrollapplication.ReRecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </latte.example.com.customnestedscrollapplication.CustomNestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

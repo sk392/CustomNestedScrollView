@@ -1,0 +1,87 @@
+TASK latte.example.com.customnestedscrollapplication id=1256 userId=0
+  ACTIVITY latte.example.com.customnestedscrollapplication/.MainActivity 490af9 pid=11833
+    Local Activity 232e108 State:
+      mResumed=true mStopped=false mFinished=false
+      mChangingConfigurations=false
+      mCurrentConfig={0 1.1 themeSeq = 0 showBtnBg = 0 450mcc6mnc [ko_KR] ldltr sw411dp w411dp h773dp 420dpi nrml long hdr port finger -keyb/v/h -nav/h appBounds=Rect(0, 0 - 1080, 2094) s.71 mkbd/h desktop/d ?dc}
+      threadConfig={0 1.1 themeSeq = 0 showBtnBg = 0 450mcc6mnc [ko_KR] ldltr sw411dp w411dp h773dp 420dpi nrml long hdr port finger -keyb/v/h -nav/h appBounds=Rect(0, 0 - 1080, 2094) s.71 mkbd/h desktop/d ?dc}  isDexCompatMode=false
+      mLoadersStarted=true
+      Active Fragments in eac9ef1:
+        #0: ReportFragment{7534ad6 #0 androidx.lifecycle.LifecycleDispatcher.report_fragment_tag}
+          mFragmentId=#0 mContainerId=#0 mTag=androidx.lifecycle.LifecycleDispatcher.report_fragment_tag
+          mState=5 mIndex=0 mWho=android:fragment:0 mBackStackNesting=0
+          mAdded=true mRemoving=false mFromLayout=false mInLayout=false
+          mHidden=false mDetached=false mMenuVisible=true mHasMenu=false
+          mRetainInstance=false mRetaining=false mUserVisibleHint=true
+          mFragmentManager=FragmentManager{eac9ef1 in HostCallbacks{6c84157}}
+          mHost=android.app.Activity$HostCallbacks@6c84157
+          Child FragmentManager{7768444 in ReportFragment{7534ad6}}:
+            FragmentManager misc state:
+              mHost=android.app.Activity$HostCallbacks@6c84157
+              mContainer=android.app.Fragment$1@a5b392d
+              mParent=ReportFragment{7534ad6 #0 androidx.lifecycle.LifecycleDispatcher.report_fragment_tag}
+              mCurState=5 mStateSaved=false mDestroyed=false
+      Added Fragments:
+        #0: ReportFragment{7534ad6 #0 androidx.lifecycle.LifecycleDispatcher.report_fragment_tag}
+      FragmentManager misc state:
+        mHost=android.app.Activity$HostCallbacks@6c84157
+        mContainer=android.app.Activity$HostCallbacks@6c84157
+        mCurState=5 mStateSaved=false mDestroyed=false
+    ViewRoot:
+      mAdded=true mRemoved=false
+      mConsumeBatchedInputScheduled=false
+      mConsumeBatchedInputImmediatelyScheduled=false
+      mPendingInputEventCount=0
+      mProcessInputEventsScheduled=false
+      mTraversalScheduled=false      mIsAmbientMode=false
+      android.view.ViewRootImpl$NativePreImeInputStage: mQueueLength=0
+      android.view.ViewRootImpl$ImeInputStage: mQueueLength=0
+      android.view.ViewRootImpl$NativePostImeInputStage: mQueueLength=0
+    Choreographer:
+      mFrameScheduled=false
+      mLastFrameTime=200693069 (6190 ms ago)
+    View Hierarchy:
+      DecorView@16343e4[MainActivity]
+        android.widget.LinearLayout{a113e62 V.E...... ........ 0,0-1080,2094}
+          android.view.ViewStub{c259bf3 G.E...... ......I. 0,0-0,0 #10201c4 android:id/action_mode_bar_stub}
+          android.widget.FrameLayout{279a0b0 V.E...... ........ 0,63-1080,2094}
+            androidx.appcompat.widget.FitWindowsLinearLayout{4df3b29 V.E...... ........ 0,0-1080,2031 #7f080009 app:id/action_bar_root}
+              androidx.appcompat.widget.ViewStubCompat{1c8deae G.E...... ......I. 0,0-0,0 #7f080014 app:id/action_mode_bar_stub}
+              androidx.appcompat.widget.ContentFrameLayout{ef4044f V.E...... ........ 0,0-1080,2031 #1020002 android:id/content}
+                androidx.coordinatorlayout.widget.CoordinatorLayout{b5017dc V.E...... ........ 0,0-1080,2031 #7f080030 app:id/coordinator_layout}
+                  com.google.android.material.appbar.AppBarLayout{bcde449 V.E...... ........ 0,0-1080,908 #7f08001d app:id/app_bar_layout}
+                    com.google.android.material.appbar.CollapsingToolbarLayout{88760e5 V.ED..... ........ 0,0-1080,908 #7f0800ac app:id/toolbar}
+                      androidx.appcompat.widget.AppCompatTextView{74837ba V.ED..... ........ 0,0-1080,908}
+                      androidx.appcompat.widget.Toolbar{e96966b I.E...... ......ID 0,0-1080,121}
+                        android.view.View{9b4d5c8 V.ED..... ......ID 42,0-1080,121}
+                  latte.example.com.customnestedscrollapplication.CustomNestedScrollView{baea14e V.E...... ........ 0,908-1080,2939}
+                    androidx.appcompat.widget.AppCompatTextView{bd22661 V.ED..... ........ 0,0-1080,263}
+                    androidx.recyclerview.widget.RecyclerView{321586 VFED..... .F...... 0,263-1080,2294 #7f080073 app:id/rv}
+                      android.widget.LinearLayout{3862e47 V.E...... ........ 0,0-1080,263}
+                        androidx.appcompat.widget.AppCompatTextView{4258674 V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{4a9c79d V.E...... ........ 0,263-1080,526}
+                        androidx.appcompat.widget.AppCompatTextView{78a0412 V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{aed67e3 V.E...... ........ 0,526-1080,789}
+                        androidx.appcompat.widget.AppCompatTextView{94e95e0 V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{3604099 V.E...... ........ 0,789-1080,1052}
+                        androidx.appcompat.widget.AppCompatTextView{3004f5e V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{49f3f V.E...... ........ 0,1052-1080,1315}
+                        androidx.appcompat.widget.AppCompatTextView{437300c V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{16b4d55 V.E...... ........ 0,1315-1080,1578}
+                        androidx.appcompat.widget.AppCompatTextView{fe036a V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{f2df05b V.E...... ........ 0,1578-1080,1841}
+                        androidx.appcompat.widget.AppCompatTextView{72d40f8 V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+                      android.widget.LinearLayout{fe069d1 V.E...... ........ 0,1841-1080,2104}
+                        androidx.appcompat.widget.AppCompatTextView{b70ec36 V.ED..... ........ 489,79-590,133 #7f0800a9 app:id/title}
+        android.view.View{ed13737 V.ED..... ........ 0,2094-1080,2220 #1020030 android:id/navigationBarBackground}
+        android.view.View{97174a4 V.ED..... ........ 0,0-1080,63 #102002f android:id/statusBarBackground}
+    Looper (main, tid 2) {1b0d20d}
+      (Total messages: 0, polling=false, quitting=false)
+    Phone Window:
+      mNavigationBarColor=fff0f0f0
+      mForcedNavigationBarColor=false
+    Local FragmentActivity 232e108 State:
+      mCreated=true mResumed=true mStopped=false    FragmentManager misc state:
+      mHost=androidx.fragment.app.FragmentActivity$HostCallbacks@b5795c2
+      mContainer=androidx.fragment.app.FragmentActivity$HostCallbacks@b5795c2
+      mCurState=4 mStateSaved=false mStopped=false mDestroyed=false
