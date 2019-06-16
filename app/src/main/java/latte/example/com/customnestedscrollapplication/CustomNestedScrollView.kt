@@ -258,28 +258,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
         return mChildHelper.dispatchNestedFling(velocityX, velocityY, consumed)
     }
 
-
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        Log.d("mIsBeingDragged", "onInterceptTouchEvent $ev ")
-
-        ev ?: return super.onInterceptTouchEvent(ev)
-        val action = ev.action
-        Log.d("mIsBeingDragged", "onInterceptTouchEvent $action /  $mIsBeingDragged")
-
-
-        when (action and MotionEvent.ACTION_MASK) {
-            MotionEvent.ACTION_DOWN -> {
-                if (isInFirstChild(ev.x, ev.y)) {
-                    return true
-                } else {
-                    mIsBeingDragged = false
-                    recycleVelocityTracker()
-                }
-            }
-        }
-        return mIsBeingDragged
-    }
-
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         ev ?: return super.onTouchEvent(ev)
         val vtEvent = MotionEvent.obtain(ev)
@@ -314,10 +292,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
 
                 val pointerIndex = ev.findPointerIndex(mActivePointerId)
                 if (pointerIndex == -1) {
-                    return false
-                }
-
-                if(!isInFirstChild(ev.x,ev.y)){
                     return false
                 }
 
