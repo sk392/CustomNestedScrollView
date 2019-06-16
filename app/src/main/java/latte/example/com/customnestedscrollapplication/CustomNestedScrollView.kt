@@ -8,6 +8,7 @@ import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import android.widget.OverScroller
 import androidx.core.view.*
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import java.util.*
@@ -298,21 +299,17 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 val y = ev.getY(pointerIndex).toInt()
 
                 var dy = mLastMotionY - y
-
-                if (dispatchNestedPreScroll(0, dy, mScrollConsumed, mScrollOffset, ViewCompat.TYPE_TOUCH)) {
-                    dy -= mScrollConsumed[1]
-                    vtEvent.offsetLocation(0f, mScrollOffset[1].toFloat())
-                    mNestedYOffset += mScrollOffset[1]
-                }
-
                 if (Math.abs(dy) > mTouchSlop && nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL == 0) {
                     parent?.requestDisallowInterceptTouchEvent(true)
 
                     mIsBeingDragged = true
-                    mLastMotionY = y
                     initVelocityTrackerIfNotExists()
                     mVelocityTracker?.addMovement(ev)
-
+                }
+                if (dispatchNestedPreScroll(0, dy, mScrollConsumed, mScrollOffset, ViewCompat.TYPE_TOUCH)) {
+                    dy -= mScrollConsumed[1]
+                    vtEvent.offsetLocation(0f, mScrollOffset[1].toFloat())
+                    mNestedYOffset += mScrollOffset[1]
                 }
 
 
@@ -320,27 +317,25 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                     //네스티드 프리스크롤한 후에 시작되는 y값을 계산.
                     mLastMotionY = y - mScrollOffset[1]
 
-                    overScroll(dy)
 
                     val oldY = scrollY
+                    overScroll(dy)
 
-                    val scrolledDy = scrollY - oldY
-                    val unconsumedY = dy - scrolledDy
-                    Log.d("unconsumedY", "$dy / $unconsumedY")
+                    val scrollDy = scrollY - oldY
+                    val unconsumedY = dy - scrollDy
                     if(childCount>1){
                         if((unconsumedY>0 && scrollY>=getChildAt(0).height)
                             || (unconsumedY<0 && scrollY>0)){
                             isNestedScrolled = true
                             childNestedScrollY += unconsumedY
                             getChildAt(1).scrollBy(0,unconsumedY)
-                            Log.d("childNestedScrollY" , "$childNestedScrollY")
-                        }else{
+                            Log.d("LLLLLAAAA","$scrollY // $unconsumedY -- $dy")
+                        }else {
                             //내려갈 때
-                            if (dispatchNestedScroll(
-                                    0, scrolledDy, 0, unconsumedY,
-                                    mScrollOffset, ViewCompat.TYPE_TOUCH
-                                )
+                            if (dispatchNestedScroll(0, scrollDy, 0, unconsumedY,
+                                    mScrollOffset, ViewCompat.TYPE_TOUCH)
                             ) {
+                                Log.d("LLLLLTTTT","$scrollY -- $unconsumedY // $dy")
                                 mLastMotionY -= mScrollOffset[1]
                                 vtEvent.offsetLocation(0f, mScrollOffset[1].toFloat())
                                 mNestedYOffset += mScrollOffset[1]
@@ -391,8 +386,9 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
         } else {
             0
         }
+        Log.d("LLLLLLLL","${getChildAt(1).scrollY}")
 
-        if(childCount>1  && childNestedScrollY <0 && dy<0){
+        if(childCount>1  && getChildAt(1).scrollY >0 && dy<0){
             return
         }
         var newScrollY = scrollY + dy

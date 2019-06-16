@@ -14,17 +14,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val rv = findViewById<ReRecyclerView>(R.id.rv).apply{
-            layoutManager = LinearLayoutManager(context,RecyclerView.VERTICAL,false)
-            adapter = Adapter().apply {
-                val mutableList = mutableListOf<String>()
-                for(i in 1..20){
-                    mutableList.add("Content$i")
-                }
-                setItemList(mutableList)
-            }
-
-        }
+//        val rv = findViewById<ReRecyclerView>(R.id.rv).apply{
+//            layoutManager = LinearLayoutManager(context,RecyclerView.VERTICAL,false)
+//            adapter = Adapter().apply {
+//                val mutableList = mutableListOf<String>()
+//                for(i in 1..20){
+//                    mutableList.add("Content$i")
+//                }
+//                setItemList(mutableList)
+//            }
+//
+//        }
 
 
     }

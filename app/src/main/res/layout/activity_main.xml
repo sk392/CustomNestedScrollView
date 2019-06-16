@@ -58,8 +58,8 @@
                         android:background="@android:color/black"
                         android:textSize="15dp"
                         android:text="video"/>
-        <latte.example.com.customnestedscrollapplication.ReRecyclerView
-                android:id="@+id/rv"
+        <latte.example.com.customnestedscrollapplication.BaseWebView
+                android:background="@android:color/holo_green_dark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
     </latte.example.com.customnestedscrollapplication.CustomNestedScrollView>
