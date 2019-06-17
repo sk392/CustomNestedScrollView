@@ -219,6 +219,7 @@ open class BaseWebView : WebView, NestedScrollingChild2 {
 
                         if (dispatchNestedScroll(0, 0, 0, dyUnconsumed, scrollOffset, ViewCompat.TYPE_TOUCH)) {
                             if (scrollOffset[0] != 0 || scrollOffset[1] != 0) {
+
                                 dy -= (dy.toInt() + scrollOffset[1])
                                 isNestedScrolled = true
                             }

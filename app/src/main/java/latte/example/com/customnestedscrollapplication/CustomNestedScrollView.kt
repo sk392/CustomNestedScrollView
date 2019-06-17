@@ -32,7 +32,6 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
 
     private var mActivePointerId = INVALID_POINTER
     private var configuration = ViewConfiguration.get(context)
-    private var mOverScroller: OverScroller = OverScroller(context)
     private val velocityTracker: VelocityTracker by lazy(LazyThreadSafetyMode.NONE) { VelocityTracker.obtain() }
 
     private val mScrollOffset = IntArray(2)
@@ -47,6 +46,7 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
     private var mLastMotionY: Int = 0
     private var hasBeenNestedScrolled: Boolean = false
     private var isNestedScrolled = false
+    private var velocityTrackerOffsetY :Float = 0f
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 
@@ -260,23 +260,20 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         ev ?: return super.onTouchEvent(ev)
+        // velocity Tracker Event
         val vtEvent = MotionEvent.obtain(ev)
 
         val actionMasked = ev.actionMasked
 
+        var eventAddedToVelocityTracker = false
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             nestedScrollOffset = 0f
+            velocityTrackerOffsetY = 0f
         }
-        vtEvent.offsetLocation(0f, nestedScrollOffset)
+        vtEvent.offsetLocation(0f, velocityTrackerOffsetY)
 
         when (actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                if (childCount == 0) return false
-
-                velocityTracker.addMovement(ev)
-
-                mOverScroller.computeScrollOffset()
-                if (!mOverScroller.isFinished) mOverScroller.abortAnimation()
 
                 mLastMotionY = ev.y.toInt()
                 mActivePointerId = ev.getPointerId(0)
@@ -300,12 +297,13 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 if (Math.abs(dy) > mTouchSlop && nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL == 0) {
                     parent?.requestDisallowInterceptTouchEvent(true)
                     mIsBeingDragged = true
-                    velocityTracker?.addMovement(ev)
+                    velocityTracker.addMovement(ev)
                 }
                 if (dispatchNestedPreScroll(0, dy, mScrollConsumed, mScrollOffset, ViewCompat.TYPE_TOUCH)) {
                     dy -= mScrollConsumed[1]
                     hasBeenNestedScrolled = true
                     vtEvent.offsetLocation(0f, mScrollOffset[1].toFloat())
+                    velocityTrackerOffsetY += mScrollOffset[1].toFloat()
                     mNestedYOffset += mScrollOffset[1]
                 }
 
@@ -335,22 +333,19 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                                 hasBeenNestedScrolled = true
                                 mLastMotionY -= mScrollOffset[1]
                                 vtEvent.offsetLocation(0f, mScrollOffset[1].toFloat())
+                                velocityTrackerOffsetY += mScrollOffset[1].toFloat()
                                 mNestedYOffset += mScrollOffset[1]
                             }
                         }
                     }
-
-
                 }
             }
             MotionEvent.ACTION_UP -> {
 
+                velocityTracker.addMovement(vtEvent)
+                eventAddedToVelocityTracker = true
                 velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity)
-                val initVelocity = velocityTracker.getYVelocity(mActivePointerId)
-
-                if (Math.abs(initVelocity) > mMinimumVelocity) {
-                    nestedScrollingFlinger.startFling(-velocityTracker.yVelocity, hasBeenNestedScrolled)
-                }
+                nestedScrollingFlinger.startFling(-velocityTracker.yVelocity, hasBeenNestedScrolled)
                 mActivePointerId = INVALID_POINTER
                 endDrag()
             }
@@ -368,7 +363,9 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 mLastMotionY = ev.getY(ev.findPointerIndex(mActivePointerId)).toInt()
             }
         }
-        velocityTracker.addMovement(vtEvent)
+        if (!eventAddedToVelocityTracker) {
+            velocityTracker.addMovement(vtEvent)
+        }
         vtEvent.recycle()
         return true
     }
