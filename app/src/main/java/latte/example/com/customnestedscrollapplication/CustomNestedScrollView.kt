@@ -168,7 +168,7 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                     val oldScrollY = scrollY
 
                     val adjustScrollY = dy - consumed[1]
-                    val maxScrollY = getChildAt(0).height
+                    val maxScrollY = getFirstChildHeight()
                     if (adjustScrollY > 0) {
                         if (adjustScrollY + scrollY < maxScrollY) {
                             scrollBy(0, adjustScrollY)
@@ -273,13 +273,14 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
             MotionEvent.ACTION_DOWN -> {
                 if (childCount == 0) return false
 
-                velocityTracker?.addMovement(ev)
+                velocityTracker.addMovement(ev)
 
                 mOverScroller.computeScrollOffset()
                 if (!mOverScroller.isFinished) mOverScroller.abortAnimation()
 
                 mLastMotionY = ev.y.toInt()
                 mActivePointerId = ev.getPointerId(0)
+                nestedScrollingFlinger.stopFling()
                 startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH)
             }
             MotionEvent.ACTION_MOVE -> {
@@ -367,48 +368,36 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                 mLastMotionY = ev.getY(ev.findPointerIndex(mActivePointerId)).toInt()
             }
         }
-        if (velocityTracker != null) {
-            velocityTracker?.addMovement(vtEvent)
-        }
+        velocityTracker.addMovement(vtEvent)
         vtEvent.recycle()
         return true
     }
 
     private fun overScroll(dy: Int) {
-        val scrollRangeY = if (childCount > 0) {
-            getChildAt(0).height
-        } else {
-            0
-        }
-        Log.d("LLLLLLLL", "${getChildAt(1).scrollY}")
+        val scrollRangeY = getFirstChildHeight()
 
         if (childCount > 1 && getChildAt(1).scrollY > 0 && dy < 0) {
             return
         }
         var newScrollY = scrollY + dy
 
-        // Clamp values if at the limits and record
-        val top = 0
-        val bottom = scrollRangeY
-        Log.d("newScrollY", "$newScrollY // $top // $bottom")
-        if (newScrollY > bottom) {
-            newScrollY = bottom
-        } else if (newScrollY < top) {
-            newScrollY = top
+        if (newScrollY > scrollRangeY) {
+            newScrollY = scrollRangeY
+        } else if (newScrollY < 0) {
+            newScrollY = 0
         }
+
         scrollTo(0, newScrollY)
     }
 
-    private fun getScrollRange(): Int {
-        var scrollRange = 0
+    private fun getFirstChildHeight(): Int {
+        var childSize = 0
         if (childCount > 0) {
             val child = getChildAt(0)
             val lp = child.layoutParams as FrameLayout.LayoutParams
-            val childSize = child.height + lp.topMargin + lp.bottomMargin
-            val parentSpace = height - paddingTop - paddingBottom
-            scrollRange = Math.max(0, childSize - parentSpace)
+            childSize = child.height + lp.topMargin + lp.bottomMargin
         }
-        return scrollRange
+        return childSize
     }
 
     fun setFirstChildType(type: NestedScrollViewChildType) {
@@ -476,21 +465,22 @@ class CustomNestedScrollView : FrameLayout, NestedScrollingParent2, NestedScroll
                     dy -= scrollConsumed[1]
                 }
 
-                if (dispatchNestedScroll(0, 0, 0, dy, scrollOffset, ViewCompat.TYPE_NON_TOUCH)) {
+                val oldScrollY = scrollY
+                overScroll(dy)
+
+                val dyConsumed = scrollY - oldScrollY
+                var dyUnconsumed = dy - dyConsumed
+                Log.d("FlingFling", "scrollY $scrollY dyUnconsumed $dyUnconsumed")
+                if (childCount > 1 && (dyUnconsumed > 0 && scrollY >= getFirstChildHeight())
+                    || (dyUnconsumed < 0 && scrollY > 0)
+                ) {
+                    getChildAt(1).scrollBy(0, dyUnconsumed)
+                    dyUnconsumed = 0
+                }
+
+                if (dispatchNestedScroll(0, dyConsumed, 0, dyUnconsumed, scrollOffset, ViewCompat.TYPE_NON_TOUCH)) {
                     dy += scrollOffset[1]
                 }
-
-                val scrollToY = scrollY + dy
-                if (dy < 0 && scrollToY < 0) {
-                    scrollTo(0, 0)
-                    scroller.abortAnimation()
-                } else if (dy > 0 && scrollToY > computeVerticalScrollRange()) {
-                    scrollTo(0, computeVerticalScrollRange())
-                    scroller.abortAnimation()
-                } else {
-                    scrollBy(0, dy)
-                }
-
                 if (scroller.isFinished) {
                     endFling()
                 } else {
